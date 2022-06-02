@@ -94,10 +94,7 @@ async def call_number_info(query: types.CallbackQuery):
     await bot.answer_callback_query(query.id)
     await query.message.answer('Если что-то пошло не так:')
     await query.message.answer('тех.поддержка: '
-                               '+74956098767\nчат диспетчеров @dts_rocket_bot\nкросс:'
-                               ' +74956098788\nлинейная: +74956383346'
-                               '\nИТР\nНовиков Дмитрий Александрович:\nгор:+74954039350 \nмобильный:+79859701103'
-                               '\nСоломин Роман Владимирович:\nгор +74954039144\nмобильный +79778626038')
+                               '+')
 
     key_2 = types.InlineKeyboardMarkup()
     but1_1 = types.InlineKeyboardButton(text="КОНТАКТЫ СОТРУДНИКОВ", callback_data="Num1")
@@ -111,8 +108,8 @@ async def inline_button3(query: types.CallbackQuery):
 @dp.callback_query_handler(text="Number3")
 async def inline_button3(query: types.CallbackQuery):
     await query.message.answer(
-        "Почта для протации номера: mnp_dsk@mts.ru \nПочта для отправки Фото паспорта: pd_dkp@mts.ru  \nПочта для отправки Демонтаж : lk_fix@mts.ru\nПочта для отмены наряда: osk.nnov@mts.ru  \nПочта Фугр перенос наряда: fgurnn@mts.")
-    await query.message.answer("открыть меню ----->  /menu")
+        "Почта для протации номера: 
+        await query.message.answer("открыть меню ----->  /menu")
 
 @dp.callback_query_handler(text="Number4")
 async def inline_button3(query: types.CallbackQuery):
