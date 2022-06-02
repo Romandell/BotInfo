@@ -1,0 +1,11 @@
+logging.basicConfig(level=logging.INFO)
+
+st = MemoryStorage()
+loop = asyncio.get_event_loop()
+bot = Bot(BOT_TOKEN, parse_mode="HTML")
+dp = Dispatcher(bot, loop=loop, storage=st)
+
+if __name__ == "__main__":
+    from handlers import dp, send_to_admin, ex_to_admin
+
+    executor.start_polling(dp, on_startup=send_to_admin, on_shutdown=ex_to_admin)
