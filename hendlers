@@ -63,7 +63,7 @@ async def proces_name(message: types.Message, state: FSMContext):
         data['tabel'] = message.text
     async with state.proxy() as data:
         text = data['tabel']
-    wb = openpyxl.load_workbook('TELLIST.xlsx')
+    wb = openpyxl.load_workbook()
     sheet = wb.active
     count = 0
     for cell in sheet['A']:
