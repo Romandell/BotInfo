@@ -1,0 +1,258 @@
+
+async def send_to_admin(dp):
+    await bot.send_message(chat_id=admin_id, text="Бот запущен")
+
+
+async def ex_to_admin(dp):
+    await bot.send_message(chat_id=admin_id, text="Бот Выключен")
+
+
+BASE_DIR = Path(__file__).parent
+db_path = BASE_DIR / "my_db.sqlite"
+
+tabel = []
+
+
+class Form(StatesGroup):
+    name = State()
+    tabel = State()
+    adres = State()
+    address = State()
+    entrance = State()
+    code = State()
+    tabel1 = State()
+
+@dp.message_handler(commands=['start'])
+async def start(message: types.Message):
+    await message.reply(
+        'Привет, это бот внутренего ресурса МГТС. Он создан в помошь СКС для оперативного решения возникших проблемю Ниже представлена информация по навигации: '
+        ' Чтобы вывести список команд нажмите ----> /menu')
+
+@dp.message_handler(commands=['menu'])
+async def menu(message: types.Message):
+    key_1 = types.InlineKeyboardMarkup()
+    but_1 = types.InlineKeyboardButton(text="РЕЙТИНГ", callback_data="Number1")
+    but_2 = types.InlineKeyboardButton(text="КОНТАКТНАЯ ИНФОРМАЦИЯ", callback_data="Number2")
+    but_3 = types.InlineKeyboardButton(text="ИНФО ПОЧТА", callback_data="Number3")
+    but_4 = types.InlineKeyboardButton(text="ТАРИФЫ МТС", callback_data="Number4")
+    but_5 = types.InlineKeyboardButton(text=" УМНЫЙ ДОМ", callback_data="Number5")
+    but_6 = types.InlineKeyboardButton(text=" ГОЛЬФСТРИМ", callback_data="Number6")
+    but_7 = types.InlineKeyboardButton(text=" ССЫЛКА НА ВТОРОЙ ПОН", callback_data="Number7")
+    but_8 = types.InlineKeyboardButton(text=" ДОМАФОНЫ", callback_data="Number8")
+    but_9 = types.InlineKeyboardButton(text=" НАРЯДЫ", callback_data="Number9")
+
+
+    # keyboard.add(but_1, but_2, but_3, but_4, but_5, but_6, but_7)
+    key_1.add(but_1, but_3)
+    key_1.add(but_2)
+    key_1.add(but_7,but_8)
+    key_1.add(but_4, but_5, but_6)
+    key_1.add(but_9)
+    await message.answer(f"Выбирите раздел меню.", reply_markup=key_1)
+
+
+@dp.callback_query_handler(text="Number1")
+async def inline_button1(query: types.CallbackQuery):
+    await query.message.answer("Вы перешли в раздел рейтинга.")
+    await Form.tabel.set()
+    await query.message.reply('Привет, для отображения информации напиши свой табельник')
+
+@dp.message_handler(state=Form.tabel)
+async def proces_name(message: types.Message, state: FSMContext):
+    async with state.proxy() as data:
+        data['tabel'] = message.text
+    async with state.proxy() as data:
+        text = data['tabel']
+    wb = openpyxl.load_workbook('TELLIST.xlsx')
+    sheet = wb.active
+    count = 0
+    for cell in sheet['A']:
+        count += 1
+        if str(cell.value) == text:
+            break
+    a = []
+    for row in sheet[count]:
+        a.append(str(row.value))
+    fio = ("".join(a[1]))
+    foto = ("".join(a[4]))
+    internet = ("".join(a[3]))
+    tv = ("".join(a[2]))
+    kion = ("".join(a[5]))
+    prodal = ("".join(a[6]))
+
+    await message.answer(f'Привет {fio}'
+                         f'\nУ Вас {foto} не сделанных фото.'
+                         f'\nКонвертация Интернет: {internet}%'
+                         f'\nКонвертация ТВ: {tv}%'
+                         f'\nАктиваций KION: {kion}шт'
+                         f'\nПродажи: {prodal}шт')
+    await message.answer("открыть меню ----->  /menu")
+    await state.finish()
+
+@dp.callback_query_handler(text="Number2")
+async def call_number_info(query: types.CallbackQuery):
+    await bot.answer_callback_query(query.id)
+    await query.message.answer('Если что-то пошло не так:')
+    await query.message.answer('тех.поддержка: '
+                               '+74956098767\nчат диспетчеров @dts_rocket_bot\nкросс:'
+                               ' +74956098788\nлинейная: +74956383346'
+                               '\nИТР\nНовиков Дмитрий Александрович:\nгор:+74954039350 \nмобильный:+79859701103'
+                               '\nСоломин Роман Владимирович:\nгор +74954039144\nмобильный +79778626038')
+
+    key_2 = types.InlineKeyboardMarkup()
+    but1_1 = types.InlineKeyboardButton(text="КОНТАКТЫ СОТРУДНИКОВ", callback_data="Num1")
+    key_2.add(but1_1)
+    await query.message.answer(f"открыть меню ----->  /menu", reply_markup=key_2)
+
+@dp.callback_query_handler(text="Num1")
+async def inline_button3(query: types.CallbackQuery):
+    await query.message.answer()
+
+@dp.callback_query_handler(text="Number3")
+async def inline_button3(query: types.CallbackQuery):
+    await query.message.answer(
+        "Почта для протации номера: mnp_dsk@mts.ru \nПочта для отправки Фото паспорта: pd_dkp@mts.ru  \nПочта для отправки Демонтаж : lk_fix@mts.ru\nПочта для отмены наряда: osk.nnov@mts.ru  \nПочта Фугр перенос наряда: fgurnn@mts.")
+    await query.message.answer("открыть меню ----->  /menu")
+
+@dp.callback_query_handler(text="Number4")
+async def inline_button3(query: types.CallbackQuery):
+    await bot.answer_callback_query(query.id)
+    await query.message.answer("Тарифы МТС")
+    path = "МТСТАРИФЫ.PNG"
+    path1 = "СКИДКАМТС.PNG"
+    photo1 = open(path, 'rb')
+    photo = open(path1, 'rb')
+    await query.message.answer_photo(photo=photo1, caption='Линейка тарифов на 22.04.2022')
+    await query.message.answer("открыть меню ----->  /menu")
+
+@dp.callback_query_handler(text="Number5")
+async def inline_button3(query: types.CallbackQuery):
+    await bot.answer_callback_query(query.id)
+    await query.message.answer("В разработке")
+    await query.message.answer("открыть меню ----->  /menu")
+
+@dp.callback_query_handler(text="Number6")
+async def inline_button3(query: types.CallbackQuery):
+    await bot.answer_callback_query(query.id)
+    await query.message.answer(f"ПУСТОТА")
+    await query.message.answer("открыть меню ----->  /menu")
+
+@dp.callback_query_handler(text="Number7")
+async def process_callback_button1(query: types.CallbackQuery):
+    await bot.answer_callback_query(query.id)
+    await query.message.answer("https://mgts.ru/iframes/check/form.php?partner=montazh")
+    await query.message.answer("открыть меню ----->  /menu")
+
+@dp.callback_query_handler(text="Number8")
+async def domafon(query: types.CallbackQuery):
+    await query.message.answer("Вы перешли в раздел Домафоны.")
+    key_3 = types.InlineKeyboardMarkup()
+    but3_1 = types.InlineKeyboardButton(text="Узнать код", callback_data="Num_1")
+    but3_2 = types.InlineKeyboardButton(text="Добавить код", callback_data="Num_2")
+    key_3.add(but3_1,but3_2)
+    await query.message.answer(f"открыть меню ----->  /menu", reply_markup=key_3)
+
+@dp.callback_query_handler(text="Num_1")
+async def inline_button3_1(query: types.CallbackQuery):
+    await Form.adres.set()
+    await query.message.reply('Привет, для отображения информации напиши АДРЕС от которого нужен ключ')
+
+@dp.callback_query_handler(text="Num_2")
+async def inline_button3_2(query: types.CallbackQuery):
+    await Form.address.set()
+    await query.message.reply('Введите адрес')
+
+@dp.message_handler(state=Form.address)
+async def addres_name(message: types.Message, state: FSMContext):
+    async with state.proxy() as date:
+        date['address'] = message.text
+        await Form.next()
+        await message.reply('Введите подьезд')
+
+@dp.message_handler(state=Form.entrance)
+async def entrance_name(message: types.Message, state: FSMContext):
+    async with state.proxy() as date:
+        date['entrance'] = message.text
+        await Form.next()
+        await message.reply('Введите Код')
+@dp.message_handler(state=Form.code)
+async def code_name(message: types.Message, state: FSMContext):
+    async with state.proxy() as date:
+        date['code'] = message.text
+    async with state.proxy() as data:
+        address = str.lower(data['address'])
+        entrance = data['entrance']
+        code = data['code']
+    db = sqlite3.connect(db_path)
+    db_cursor = db.cursor()
+    db_cursor.execute(f"""INSERT INTO
+    adres (address,entrance,code)
+    VALUES
+    ('{address}', '{entrance}','{code}');
+    """)
+    db.commit()  # сохранение результата в базе
+    db.close()
+
+    await state.finish()
+
+    await message.answer('АДРЕС ДОБАВЛЕН, открыть меню ----->  /menu')
+
+
+
+@dp.message_handler(state=Form.adres)
+async def adres_name(message: types.Message, state: FSMContext):
+    async with state.proxy() as data:
+        data['adres'] = message.text
+    async with state.proxy() as data:
+        tex = str.lower(data['adres'])
+    db = sqlite3.connect(db_path)
+    db_cursor = db.cursor()
+    f = f"""SELECT * FROM  adres WhERE address LIKE '%{tex}%';"""
+    db_cursor.execute(f)
+    r = db_cursor.fetchall()
+    if r == []:
+        await message.answer('Я не нашел адрес ')
+    else:
+        for i in r:
+            await message.answer(f'Адрес: {i[1]} подьезд: {i[2]} код: {i[3]}')
+
+
+    await message.answer("открыть меню ----->  /menu")
+    await state.finish()
+
+@dp.callback_query_handler(text="Number2")
+async def call_number_info(query: types.CallbackQuery):
+    await bot.answer_callback_query(query.id)
+    await query.message.answer('Если что-то пошло не так:')
+
+    key_2 = types.InlineKeyboardMarkup()
+    but1_1 = types.InlineKeyboardButton(text="КОНТАКТЫ СОТРУДНИКОВ", callback_data="Num1")
+    key_2.add(but1_1)
+    await query.message.answer(f"октрыть меню нажмите-----> /menu", reply_markup=key_2)
+
+@dp.callback_query_handler(text="Number9")
+async def inline_button1(query: types.CallbackQuery):
+    await query.message.answer("Вы перешли в раздел Наряды.")
+    await Form.tabel1.set()
+    await query.message.reply('Привет, для отображения информации напиши свой табельник')
+
+@dp.message_handler(state=Form.tabel1)
+async def proces_name(message: types.Message, state: FSMContext):
+    async with state.proxy() as data:
+        data['tabel1'] = message.text
+    async with state.proxy() as data:
+        text = data['tabel1']
+    db = sqlite3.connect(db_path)
+    db_cursor = db.cursor()
+
+    f = f"""SELECT * FROM  Tasklist WhERE tabel = '{text}';"""
+    db_cursor.execute(f)
+    r = db_cursor.fetchall()
+    if r == []:
+        print('Я не нашел ничего')
+    else:
+        for i in r:
+            await message.answer(f'Исполнитель: {i[2]}\n Тип: {i[5]} \n Телефонный Номер: {i[3]}, \n Адрес: {i[4]},\n {i[6]}')
+
+    await message.answer("открыть меню ----->  /menu")
+    await state.finish()
